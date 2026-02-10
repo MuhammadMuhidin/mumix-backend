@@ -1,3 +1,13 @@
+package middleware
+
+import (
+	"os"
+	"strings"
+
+	"github.com/gin-gonic/gin"
+	"github.com/supabase-community/gotrue-go"
+)
+
 func SupabaseAuth() gin.HandlerFunc {
 	client := gotrue.New(
 		os.Getenv("SUPABASE_URL"),

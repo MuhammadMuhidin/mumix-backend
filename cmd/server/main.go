@@ -24,4 +24,6 @@ func main() {
 
 	log.Println("Server running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
+	log.Println(len(os.Getenv("SPBASE_DB_URL")))
+	log.Println("DB URI:", os.Getenv("SPBASE_DB_URL"))
 }

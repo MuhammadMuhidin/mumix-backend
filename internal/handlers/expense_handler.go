@@ -39,3 +39,42 @@ func (h *ExpenseHandler) Create(c *gin.Context) {
 
 	c.JSON(201, exp)
 }
+
+// GET /expenses
+func (h *ExpenseHandler) GetAll(c *gin.Context) {
+	list, err := h.repo.GetAll(c.Request.Context())
+	if err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, list)
+}
+
+// PUT /expenses/:id
+func (h *ExpenseHandler) Update(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+
+	var req repositories.Expense
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(400, gin.H{"error": err.Error()})
+		return
+	}
+	req.ID = id
+
+	if err := h.repo.Update(c.Request.Context(), &req); err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.JSON(200, req)
+}
+
+// DELETE /expenses/:id
+func (h *ExpenseHandler) Delete(c *gin.Context) {
+	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+
+	if err := h.repo.Delete(c.Request.Context(), id); err != nil {
+		c.JSON(500, gin.H{"error": err.Error()})
+		return
+	}
+	c.Status(204)
+}

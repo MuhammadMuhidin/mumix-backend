@@ -19,6 +19,12 @@ func ListCreate(db *sql.DB) http.HandlerFunc {
 
 			json.NewDecoder(r.Body).Decode(&req)
 
+			if req.Title == "" {
+				http.Error(w, "title is required", http.StatusBadRequest)
+				return
+			}
+			
+
 			todo, err := Insert(ctx, db, req.Title)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)

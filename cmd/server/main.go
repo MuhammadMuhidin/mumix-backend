@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("SUPABASE_DB_URI")
+	dsn := os.Getenv("SPBASE_DB_URL")
 	if dsn == "" {
-		log.Fatal("SUPABASE_DB_URI is required")
+		log.Fatal("SPBASE is required")
 	}
 
 	database, err := db.New(dsn)

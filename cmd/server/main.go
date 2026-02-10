@@ -10,9 +10,9 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("SPBASE_DB_URL")
+	dsn := os.Getenv("SPBASE_URI")
 	if dsn == "" {
-		log.Fatal("SPBASE is required")
+		log.Fatal("SPBASE_URI is required")
 	}
 
 	database, err := db.New(dsn)
@@ -24,6 +24,4 @@ func main() {
 
 	log.Println("Server running on :8080")
 	log.Fatal(http.ListenAndServe(":8080", router))
-	log.Println(len(os.Getenv("SPBASE_DB_URL")))
-	log.Println("DB URI:", os.Getenv("SPBASE_DB_URL"))
 }

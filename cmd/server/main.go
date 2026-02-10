@@ -22,6 +22,11 @@ func main() {
 
 	router := httpRouter.New(database)
 
-	log.Println("Server running on :8080")
-	log.Fatal(http.ListenAndServe(":8080", router))
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8080" // fallback local
+		}
+
+		log.Println("Server running on :" + port)
+		log.Fatal(http.ListenAndServe(":"+port, router))
 }

@@ -22,7 +22,7 @@ func SupabaseAuth() gin.HandlerFunc {
 		}
 
 		token := strings.TrimPrefix(auth, "Bearer ")
-		user, err := client.GetUser(c.Request.Context(), token)
+		user, err := client.GetUser(token)
 		if err != nil {
 			c.AbortWithStatusJSON(401, gin.H{"error": "invalid token"})
 			return

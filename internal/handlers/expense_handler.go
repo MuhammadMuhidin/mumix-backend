@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"mumix-backend/internal/repositories"
 )
@@ -52,7 +54,11 @@ func (h *ExpenseHandler) GetAll(c *gin.Context) {
 
 // PUT /expenses/:id
 func (h *ExpenseHandler) Update(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "invalid id"})
+		return
+	}
 
 	var req repositories.Expense
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -65,16 +71,22 @@ func (h *ExpenseHandler) Update(c *gin.Context) {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.JSON(200, req)
 }
 
 // DELETE /expenses/:id
 func (h *ExpenseHandler) Delete(c *gin.Context) {
-	id, _ := strconv.ParseInt(c.Param("id"), 10, 64)
+	id, err := strconv.ParseInt(c.Param("id"), 10, 64)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "invalid id"})
+		return
+	}
 
 	if err := h.repo.Delete(c.Request.Context(), id); err != nil {
 		c.JSON(500, gin.H{"error": err.Error()})
 		return
 	}
+
 	c.Status(204)
 }

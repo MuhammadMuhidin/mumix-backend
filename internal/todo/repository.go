@@ -26,7 +26,7 @@ func FindAll(ctx context.Context, db *sql.DB) ([]Todo, error) {
 	var todos []Todo
 	for rows.Next() {
 		var t Todo
-		rows.Scan(&t.ID, &t.Title, &t.Completed)
+		rows.Scan(&t.ID, &t.Title, &t.Completed, &t.CreatedAt, &t.UpdatedAt)
 		todos = append(todos, t)
 	}
 	return todos, nil

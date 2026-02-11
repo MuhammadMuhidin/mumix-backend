@@ -10,23 +10,24 @@ import (
 )
 
 func main() {
-	dsn := os.Getenv("SPBASE_URI")
+	dsn := os.Getenv("KOYEBDB_URI")
 	if dsn == "" {
-		log.Fatal("SPBASE_URI is required")
+		log.Fatal("KOYEBDB_URI is required")
 	}
 
 	database, err := db.New(dsn)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatalf("db init error: %v", err)
 	}
+	defer database.Close()
 
 	router := httpRouter.New(database)
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8080" // fallback local
-		}
+		port = "8080"
+	}
 
-		log.Println("Server running on :" + port)
-		log.Fatal(http.ListenAndServe(":"+port, router))
+	log.Printf("server running on :%s", port)
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

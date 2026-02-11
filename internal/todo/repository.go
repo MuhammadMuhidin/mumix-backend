@@ -3,6 +3,8 @@ package todo
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"strings"
 )
 
 func Insert(ctx context.Context, db *sql.DB, title string) (Todo, error) {
@@ -26,11 +28,10 @@ func Insert(ctx context.Context, db *sql.DB, title string) (Todo, error) {
 }
 
 func FindAll(ctx context.Context, db *sql.DB) ([]Todo, error) {
-	rows, err := db.QueryContext(
-		ctx,
-		`select id, title, completed, created_at, updated_at
-		 from todos
-		 order by created_at desc`,
+	rows, err := db.QueryContext(ctx, `
+		select id, title, completed, created_at, updated_at
+		from todos
+		order by created_at desc`,
 	)
 	if err != nil {
 		return nil, err
@@ -38,7 +39,6 @@ func FindAll(ctx context.Context, db *sql.DB) ([]Todo, error) {
 	defer rows.Close()
 
 	var todos []Todo
-
 	for rows.Next() {
 		var t Todo
 		if err := rows.Scan(
@@ -50,8 +50,11 @@ func FindAll(ctx context.Context, db *sql.DB) ([]Todo, error) {
 		); err != nil {
 			return nil, err
 		}
-
 		todos = append(todos, t)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, err
 	}
 
 	return todos, nil
@@ -78,7 +81,7 @@ func FindByID(ctx context.Context, db *sql.DB, id string) (Todo, error) {
 }
 
 func Update(ctx context.Context, db *sql.DB, id string, t Todo) error {
-	_, err := db.ExecContext(
+	res, err := db.ExecContext(
 		ctx,
 		`update todos
 		 set title=$1,
@@ -89,45 +92,77 @@ func Update(ctx context.Context, db *sql.DB, id string, t Todo) error {
 		t.Completed,
 		id,
 	)
+	if err != nil {
+		return err
+	}
 
-	return err
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 func Patch(ctx context.Context, db *sql.DB, id string, fields map[string]any) error {
-	if v, ok := fields["title"]; ok {
-		_, _ = db.ExecContext(
-			ctx,
-			`update todos
-			 set title=$1,
-			     updated_at=now()
-			 where id=$2`,
-			v,
-			id,
-		)
+	if len(fields) == 0 {
+		return nil
 	}
 
-	if v, ok := fields["completed"]; ok {
-		_, _ = db.ExecContext(
-			ctx,
-			`update todos
-			 set completed=$1,
-			     updated_at=now()
-			 where id=$2`,
-			v,
-			id,
-		)
+	var sets []string
+	var args []any
+	i := 1
+
+	for k, v := range fields {
+		switch k {
+		case "title", "completed":
+			sets = append(sets, fmt.Sprintf("%s=$%d", k, i))
+			args = append(args, v)
+			i++
+		}
+	}
+
+	if len(sets) == 0 {
+		return nil
+	}
+
+	sets = append(sets, "updated_at=now()")
+
+	query := fmt.Sprintf(
+		"update todos set %s where id=$%d",
+		strings.Join(sets, ", "),
+		i,
+	)
+
+	args = append(args, id)
+
+	res, err := db.ExecContext(ctx, query, args...)
+	if err != nil {
+		return err
+	}
+
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil
 }
 
 func Delete(ctx context.Context, db *sql.DB, id string) error {
-	_, err := db.ExecContext(
+	res, err := db.ExecContext(
 		ctx,
-		`delete from todos
-		 where id=$1`,
+		`delete from todos where id=$1`,
 		id,
 	)
+	if err != nil {
+		return err
+	}
 
-	return err
+	affected, _ := res.RowsAffected()
+	if affected == 0 {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }

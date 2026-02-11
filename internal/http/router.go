@@ -9,17 +9,18 @@ import (
 
 func New(db *sql.DB) http.Handler {
 	mux := http.NewServeMux()
-	mux.HandleFunc("/todos", todo.ListCreate(db))
-	mux.HandleFunc("/todos/", todo.Detail(db))
 
-	// Root health check
+	mux.Handle("/todos", todo.ListCreate(db))
+	mux.Handle("/todos/", todo.Detail(db))
+
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		if r.URL.Path != "/" {
 			http.NotFound(w, r)
 			return
 		}
 		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("service is up"))
+		_, _ = w.Write([]byte("service is up"))
 	})
+
 	return mux
 }

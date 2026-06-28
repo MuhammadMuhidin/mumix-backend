@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracking - Mumix</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card-expense { transition: transform 0.2s; }
+        .card-expense:hover { transform: translateY(-2px); }
+        .sisa-positive { color: #198754; }
+        .sisa-negative { color: #dc3545; }
+        .badge-surplus { background: #d1e7dd; color: #0f5132; }
+        .badge-minus { background: #f8d7da; color: #842029; }
+    </style>
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-dark bg-dark mb-4">
+        <div class="container">
+            <a class="navbar-brand" href="/">Mumix Expense Tracker</a>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h5 class="card-title mb-3">Tambah Data Baru</h5>
+                <form class="row g-3" method="post" action="/create">
+                    <div class="col-12 col-md-2">
+                        <label class="form-label">Bulan</label>
+                        <select name="Bulan" class="form-select" required>
+                            <option value="">-- Pilih --</option>
+                            <option>Januari</option><option>Februari</option><option>Maret</option>
+                            <option>April</option><option>Mei</option><option>Juni</option>
+                            <option>Juli</option><option>Agustus</option><option>September</option>
+                            <option>Oktober</option><option>November</option><option>Desember</option>
+                        </select>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Tahun</label>
+                        <input name="Tahun" type="number" class="form-control" value="2026" required>
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Pendapatan Utama</label>
+                        <input name="Pendapatan Utama" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Pendapatan Lainnya</label>
+                        <input name="Pendapatan Lainnya" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Transfer ke Nda</label>
+                        <input name="Transfer ke Nda" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Transfer ke Mimi</label>
+                        <input name="Transfer ke Mimi" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Kartu Kredit</label>
+                        <input name="Kartu Kredit" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Tabungan Tetap</label>
+                        <input name="Tabungan Tetap" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-6 col-md-2">
+                        <label class="form-label">Pengeluaran Lainnya</label>
+                        <input name="Pengeluaran Lainnya" class="form-control" value="Rp0">
+                    </div>
+                    <div class="col-12">
+                        <button class="btn btn-primary">Tambah</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
